@@ -3,6 +3,9 @@ package com.example.android.sunshine.app;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
@@ -12,11 +15,34 @@ import java.util.Arrays;
 /**
  * Created by Josmary on 6/28/15.
  */
-public class PlaceholderFragment extends Fragment {
+public class ForecastFragment extends Fragment {
 
     WeatherAdapter weatherAdapter;;
 
-    public PlaceholderFragment() {
+    public ForecastFragment() {
+    }
+
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        // Add this line in order for this fragment to handle menu events.
+        setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.forecastfragment, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.action_refresh) {
+            FetchWeatherTask weatherTask = new FetchWeatherTask();
+            weatherTask.execute("94043");
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -33,6 +59,7 @@ public class PlaceholderFragment extends Fragment {
                 new Weather("Sun 6/29","Cloudy", "10", "8", R.drawable.cloud),
 
         };
+
 
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
