@@ -4,17 +4,20 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import org.json.JSONException;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 
 /**
  * Created by Josmary on 6/28/15.
  */
-public class FetchWeatherTask extends AsyncTask<String, Void, Void>  {
+public class FetchWeatherTask extends AsyncTask<String, Void, ArrayList<Weather> >  {
 
     private final String LOG_TAG = FetchWeatherTask.class.getSimpleName();
 
@@ -22,7 +25,7 @@ public class FetchWeatherTask extends AsyncTask<String, Void, Void>  {
     }
 
     @Override
-    protected Void doInBackground(String... params) {
+    protected ArrayList<Weather> doInBackground(String... params) {
         // If there's no zip code, there's nothing to look up.  Verify size of params.
         if (params.length == 0) {
             return null;
@@ -106,7 +109,25 @@ public class FetchWeatherTask extends AsyncTask<String, Void, Void>  {
                 }
             }
         }
+
+        try {
+            return Utility.getWeatherDataFromJson(forecastJsonStr, numDays);
+        } catch (JSONException e) {
+            Log.e(LOG_TAG, e.getMessage(), e);
+            e.printStackTrace();
+        }
+
         return null;
     }
 
+
+    @Override
+    protected void onPostExecute(ArrayList<Weather> result) {
+        if (result != null) {
+            ForecastFragment.weatherAdapter.clear();
+            for(Weather dayForecastStr : result) {
+                ForecastFragment.weatherAdapter.add(dayForecastStr);
+            }
+        }
+    }
 }

@@ -1,6 +1,7 @@
 package com.example.android.sunshine.app;
 
 import android.app.Activity;
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,6 +9,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -15,11 +17,16 @@ import java.util.List;
  */
 
 public class WeatherAdapter extends ArrayAdapter<Weather> {
+
     private static final String LOG_TAG = WeatherAdapter.class.getSimpleName();
+    private List<Weather> itemList;
+    private Context context;
 
 
-    public WeatherAdapter(Activity context, List<Weather> weatherList) {
+    public WeatherAdapter(Activity context, ArrayList<Weather> weatherList) {
         super(context, 0, weatherList);
+        this.itemList = weatherList;
+        this.context = context;
     }
 
     @Override
@@ -49,4 +56,13 @@ public class WeatherAdapter extends ArrayAdapter<Weather> {
 
         return convertView;
     }
+
+    public List<Weather> getItemList() {
+        return itemList;
+    }
+
+    public void setItemList(ArrayList<Weather> itemList) {
+        this.itemList = itemList;
+    }
+
 }
