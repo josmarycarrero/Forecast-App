@@ -1,5 +1,6 @@
 package com.example.android.sunshine.app;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -8,6 +9,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import java.util.ArrayList;
@@ -49,7 +51,7 @@ public class ForecastFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        ArrayList<Weather> weatherList = new ArrayList<Weather>();
+        final ArrayList<Weather> weatherList = new ArrayList<Weather>();
 
 
         weatherList.add(new Weather("Tomorrow","Foggy", "21", "8", R.drawable.cloud));
@@ -62,6 +64,17 @@ public class ForecastFragment extends Fragment {
         // Get a reference to the ListView, and attach this adapter to it.
         ListView listView = (ListView) rootView.findViewById(R.id.listview_forecast);
         listView.setAdapter(weatherAdapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+                Weather weather = weatherAdapter.getItemList().get(i);
+                String text = weather.day + " " + weather.description + " " + weather.high + " " + weather.low;
+                Intent downloadIntent = new Intent(getActivity(), DetailActivity.class).putExtra(Intent.EXTRA_TEXT, text);
+                startActivity(downloadIntent);
+
+            }
+        });
 
         return rootView;
 
