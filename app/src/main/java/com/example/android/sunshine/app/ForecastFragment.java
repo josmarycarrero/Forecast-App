@@ -1,7 +1,9 @@
 package com.example.android.sunshine.app;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -41,10 +43,23 @@ public class ForecastFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_refresh) {
-            FetchWeatherTask weatherTask = new FetchWeatherTask();
-            weatherTask.execute("94043");
+            updateWeather();
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void updateWeather() {
+        FetchWeatherTask weatherTask = new FetchWeatherTask();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String location = prefs.getString(getString(R.string.pref_location_key),
+                                getString(R.string.pref_location_default));
+        weatherTask.execute(location);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        updateWeather();
     }
 
     @Override
@@ -52,11 +67,6 @@ public class ForecastFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         final ArrayList<Weather> weatherList = new ArrayList<Weather>();
-
-
-        weatherList.add(new Weather("Tomorrow","Foggy", "21", "8", R.drawable.cloud));
-
-
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
         weatherAdapter = new WeatherAdapter(getActivity(), weatherList);
@@ -70,8 +80,8 @@ public class ForecastFragment extends Fragment {
 
                 Weather weather = weatherAdapter.getItemList().get(i);
                 String text = weather.day + " " + weather.description + " " + weather.high + " " + weather.low;
-                Intent downloadIntent = new Intent(getActivity(), DetailActivity.class).putExtra(Intent.EXTRA_TEXT, text);
-                startActivity(downloadIntent);
+                Intent intent = new Intent(getActivity(), DetailActivity.class).putExtra(Intent.EXTRA_TEXT, text);
+                startActivity(intent);
 
             }
         });
